@@ -91,8 +91,8 @@ const App = () => {
                                 <Route path="/calendar" element={<Calendar/>}/>
 
                                 {/* account settings */}
-                                <Route path="/account" element={<AccountSettings/>}/>
-                                <Route path="/signout"/> {/* FIXME: redirect admin to main page */}
+                                <Route path="/account-settings" element={<AccountSettings/>}/>
+                                <Route path="/sign-out"/> {/* FIXME: redirect admin to main page */}
 
                                 {/* catch all */}
                                 <Route path="/*" element={(<Dashboard/>)}/>

@@ -101,10 +101,12 @@ export const sidebarPages = [
         links: [
             {
                 name: "Settings",
+                link: "account-settings",
                 icon: <GrUserSettings/>
             },
             {
                 name: "Sign out",
+                link: "sign-out",
                 icon: <IoIosExit/>
             }
         ]
