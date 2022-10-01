@@ -1,8 +1,22 @@
-import React from 'react';
+import React,{useEffect, useState} from 'react';
+import Axios from 'axios';
 import {GoPrimitiveDot} from 'react-icons/go';
 import {DropDownListComponent} from '@syncfusion/ej2-react-dropdowns';
+import Slider from "react-slick";
+import "slick-carousel/slick/slick.css"; 
+import "slick-carousel/slick/slick-theme.css";
+import LeftArrow from '../components/LeftArrow'
+import RightArrow from '../components/RightArrow'
+import Button from '@mui/material/Button';
+import Card from '@mui/material/Card';
+import CardActions from '@mui/material/CardActions';
+import CardContent from '@mui/material/CardContent';
+import CardMedia from '@mui/material/CardMedia';
+import Grid from '@mui/material/Grid';
+import Typography from '@mui/material/Typography';
+import Container from '@mui/material/Container';
 
-import {Button, ChartsHeader, LineChart, Pie, SparkLine} from '../components';
+import {ChartsHeader, LineChart, Pie, SparkLine} from '../components';
 import {
     dropdownData,
     userEventData,
@@ -13,6 +27,13 @@ import {
 } from '../data/dummy';
 import {useStateContext} from '../contexts/ContextProvider';
 
+const cards = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+
+const userId = '63380b08f0c542eb6c2cff26'
+const url =`https://evoexpo-backend-api.herokuapp.com/api/admin/${userId}`
+
+
+
 const DropDown = ({currentMode}) => (
     <div className="w-28 border-1 border-color px-2 py-1 rounded-md">
         <DropDownListComponent id="time" fields={{text: 'Time', value: 'Id'}}
@@ -22,6 +43,59 @@ const DropDown = ({currentMode}) => (
 );
 
 const Dashboard = () => {
+    const [eventCount, setEventCount] = useState('0')
+    const fetchData = async()=>{
+        try{
+            const response = await Axios(url);
+            console.log(response.data.foundAdmin);
+            setEventCount(response.data.foundAdmin.eventCount)
+        }
+        catch(error){
+            console.log(error.response)
+        }
+        };
+        useEffect(()=>{
+            fetchData()
+        },[])
+    const settings = {
+        className: "center",
+        centerMode: true,
+        dots: true,
+        infinite: true,
+        centerPadding: "60px",
+        slidesToShow: 3,
+        speed: 500,
+        nextArrow: <RightArrow/>,
+        prevArrow: <LeftArrow/>,
+        responsive: [
+            {
+              breakpoint: 1024,
+              settings: {
+                slidesToShow: 2,
+                slidesToScroll: 2,
+                infinite: true,
+                dots: true
+              }
+            },
+            {
+              breakpoint: 600,
+              settings: {
+                slidesToShow: 1,
+                slidesToScroll: 1,
+                arrows: false,
+                initialSlide: 1
+              }
+            },
+            {
+              breakpoint: 480,
+              settings: {
+                slidesToShow: 1,
+                arrows: false,
+                slidesToScroll: 1
+              }
+            }
+          ]
+        };
     const {currentColor, currentMode} = useStateContext();
 
     return (
@@ -29,7 +103,8 @@ const Dashboard = () => {
             <div className="flex flex-wrap lg:flex-nowrap m-3 justify-center gap-1 items-center">
                 {userEventData.map((item) => (
                     <div key={item.title}
-                         className="bg-white h-44 dark:text-gray-200 dark:bg-secondary-dark-bg md:w-56  p-4 pt-9 rounded-2xl"
+                        className="bg-white h-44 dark:text-gray-200 dark:bg-secondary-dark-bg md:w-56  
+                        p-4 pt-9 rounded-2xl"
                     >
                         <button
                             type="button"
@@ -99,78 +174,41 @@ const Dashboard = () => {
                     </div>
                 </div>
             </div>
-
-            <div className="mt-10 flex gap-10 flex-wrap justify-center item-center">
-                <div className="bg-white dark:text-gray-200 dark:bg-secondary-dark-bg p-6 rounded-2xl">
-                    <div className="flex justify-between items-center gap-2">
-                        <p className="text-xl font-semibold">Event Staff</p>
-                    </div>
-                    <div className="mt-10 w-72 md:w-400">
-                        {eventStaffDetails.map((item, index) => (
-                            <div key={index} className="flex justify-between mt-4">
-                                <div className="flex gap-4">
-                                    <button
-                                        type="button"
-                                        style={{
-                                            color: item.iconColor,
-                                            backgroundColor: item.iconBg,
-                                        }}
-                                        className="text-2xl rounded-lg p-4 hover:drop-shadow-xl"
-                                    >
-                                        {item.icon}
-                                    </button>
-                                    <div>
-                                        <p className="text-md font-semibold">{item.name}</p>
-                                        <p className="text-sm text-gray-400">{item.roleAssigned}</p>
-                                    </div>
-                                </div>
-                                <p className={`text-${item.pcColor}`}>{item.amount}</p>
-                            </div>
-                        ))}
-                    </div>
-                    <div className="flex justify-between items-center mt-5 border-t-1 border-color">
-                        <div className="mt-3">
-                            <Button
-                                color="white"
-                                bgColor={currentColor}
-                                text="Add"
-                                borderRadius="10px"
+            <div className="flex gap-10 flex-wrap justify-center h-[75vh]">
+                <div className="flex flex-col justify-between h-full bg-white dark:text-gray-200 
+                dark:bg-secondary-dark-bg m-3 p-4 rounded-2xl md:w-780">
+            <div className="eventSlider">
+                <h2 className="text-xl font-semibold">Past Events</h2>
+                <div className="h-[60vh] mt-10">
+                    <Slider {...settings} style={{display: 'flex'}}>
+                    {cards.map((card) => (
+                    <Grid item key={card}>
+                        <Card
+                            sx={{height: '80%', display: 'flex', flexDirection: 'column', m: 1, borderRadius: 5}}
+                        >
+                            <CardContent sx={{flexGrow: 1}}>
+                                <Typography gutterBottom variant="h5" component="h2">
+                                    Heading
+                                </Typography>
+                            </CardContent>
+                            <CardMedia
+                                component="img"
+                                image="https://source.unsplash.com/random"
+                                alt="random"
                             />
-                        </div>
-                        <p className="text-gray-400 text-sm">36 Recent Transactions</p>
-                    </div>
-                </div>
-                <div>
-                    <div className="flex flex-wrap justify-center">
-                        <div
-                            className="md:w-400 bg-white dark:text-gray-200 dark:bg-secondary-dark-bg rounded-2xl p-6 m-3">
-                            <div className="flex justify-between">
-                                <p className="text-xl font-semibold">Weekly Stats</p>
-                            </div>
-                            <div className="mt-10 ">
-                                {weeklyStats.map((item) => (
-                                    <div key={item.title} className="flex justify-between mt-4 w-full">
-                                        <div className="flex gap-4">
-                                            <button
-                                                type="button"
-                                                style={{background: item.iconBg}}
-                                                className="text-2xl hover:drop-shadow-xl text-white rounded-full p-3"
-                                            >
-                                                {item.icon}
-                                            </button>
-                                            <div>
-                                                <p className="text-md font-semibold">{item.title}</p>
-                                                <p className="text-sm text-gray-400">{item.desc}</p>
-                                            </div>
-                                        </div>
-                                        <p className={`text-${item.pcColor}`}>{item.amount}</p>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-                    </div>
+                            {/* <CardActions>
+                                <Button size="small">View</Button>
+                                <Button size="small">Edit</Button>
+                            </CardActions> */}
+                        </Card>
+                    </Grid>
+                ))}
+                    </Slider>
                 </div>
             </div>
+            </div>
+            </div>
+            
 
             <div className={"mt-10 flex justify-center"}>
                 <div className="bg-white dark:text-gray-200 dark:bg-secondary-dark-bg p-6 rounded-2xl w-96 md:w-760">

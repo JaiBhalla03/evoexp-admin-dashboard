@@ -1,4 +1,5 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
+import Axios from 'axios'
 import {AiOutlineMenu} from 'react-icons/ai';
 import {FiShoppingCart} from 'react-icons/fi';
 import {BsChatLeft} from 'react-icons/bs';
@@ -10,7 +11,11 @@ import avatar from '../data/avatar.jpg';
 import {Cart, Chat, Notification, UserProfile} from '.';
 import {useStateContext} from '../contexts/ContextProvider';
 
+const userId = '63380b08f0c542eb6c2cff26'
+const url =`https://evoexpo-backend-api.herokuapp.com/api/admin/${userId}`
+
 const NavButton = ({title, customFunc, icon, color, dotColor}) => (
+    
     <TooltipComponent content={title} position="BottomCenter">
         <button
             type="button"
@@ -28,6 +33,25 @@ const NavButton = ({title, customFunc, icon, color, dotColor}) => (
 );
 
 const Navbar = () => {
+    const [data, setData] = useState({
+        name: "Admin",
+        profilePicLink: {avatar}
+      })
+    const fetchData = async()=>{
+        try{
+            const response = await Axios(url);
+            console.log(response.data.foundAdmin);
+            const {_id: adminID, name, email, contactNumber, profilePicLink, eventCount, listOfEvents} = response;
+            const newdata = {...response.data.foundAdmin};
+            setData(newdata)
+        }
+        catch(error){
+            console.log(error.response)
+        }
+        };
+        useEffect(()=>{
+            fetchData()
+        },[])
     const {
         currentColor,
         activeMenu,
@@ -62,8 +86,6 @@ const Navbar = () => {
         <div className="flex justify-between p-2 md:ml-6 md:mr-6 relative">
             <NavButton title="Menu" customFunc={handleActiveMenu} color={currentColor} icon={<AiOutlineMenu/>}/>
             <div className="flex">
-                <NavButton title="Cart" customFunc={() => handleClick('cart')} color={currentColor}
-                           icon={<FiShoppingCart/>}/>
                 <NavButton title="Chat" dotColor="#03C9D7" customFunc={() => handleClick('chat')} color={currentColor}
                            icon={<BsChatLeft/>}/>
                 <NavButton title="Notification" dotColor="rgb(254, 201, 15)"
@@ -76,13 +98,13 @@ const Navbar = () => {
                     >
                         <img
                             className="rounded-full w-8 h-8"
-                            src={avatar}
+                            src={data.profilePicLink}
                             alt="user-profile"
                         />
                         <p>
                             <span className="text-gray-400 text-14">Hi,</span>{' '}
                             <span className="text-gray-400 font-bold ml-1 text-14">
-                Michael
+                {data.name}
               </span>
                         </p>
                         <MdKeyboardArrowDown className="text-gray-400 text-14"/>
