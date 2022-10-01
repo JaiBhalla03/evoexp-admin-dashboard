@@ -12,10 +12,10 @@ import {Cart, Chat, Notification, UserProfile} from '.';
 import {useStateContext} from '../contexts/ContextProvider';
 
 const userId = '63380b08f0c542eb6c2cff26'
-const url =`https://evoexpo-backend-api.herokuapp.com/api/admin/${userId}`
+const url = `https://evoexpo-backend-api.herokuapp.com/api/admin/${userId}`
 
 const NavButton = ({title, customFunc, icon, color, dotColor}) => (
-    
+
     <TooltipComponent content={title} position="BottomCenter">
         <button
             type="button"
@@ -36,22 +36,21 @@ const Navbar = () => {
     const [data, setData] = useState({
         name: "Admin",
         profilePicLink: {avatar}
-      })
-    const fetchData = async()=>{
-        try{
+    })
+    const fetchData = async () => {
+        try {
             const response = await Axios(url);
-            console.log(response.data.foundAdmin);
+            // console.log(response.data.foundAdmin);
             const {_id: adminID, name, email, contactNumber, profilePicLink, eventCount, listOfEvents} = response;
             const newdata = {...response.data.foundAdmin};
             setData(newdata)
-        }
-        catch(error){
+        } catch (error) {
             console.log(error.response)
         }
-        };
-        useEffect(()=>{
-            fetchData()
-        },[])
+    };
+    useEffect(() => {
+        fetchData()
+    }, [])
     const {
         currentColor,
         activeMenu,
