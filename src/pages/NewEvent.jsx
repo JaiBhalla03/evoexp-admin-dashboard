@@ -1,6 +1,6 @@
 import React from 'react';
 import {useFormik} from "formik";
-import {Box, FormControl, Grid, InputLabel, MenuItem, Select, TextField, Typography} from "@mui/material";
+import {Box, FormControl,Button, Grid, InputLabel, MenuItem, Select, TextField, Typography} from "@mui/material";
 import {DateTimePicker, LocalizationProvider, MobileDatePicker} from "@mui/x-date-pickers";
 import {AdapterDayjs} from '@mui/x-date-pickers/AdapterDayjs';
 import {TiTick} from "react-icons/ti";
@@ -33,10 +33,10 @@ function NewEvent(props) {
     };
 
     return (
-        <div className={"m-24 p-20 pt-0 mt-10"}>
-            <Typography variant="h2" gutterBottom>
-                Create New Event
-            </Typography>
+        <div className="p-10 flex flex-col justify-center items-center">
+            <div className="flex flex-col justify-center bg-white w-96 h-full dark:text-gray-200 dark:bg-secondary-dark-bg 
+            md:w-full m-5 p-4 rounded-2xl">
+            <h2 className='font-sans text-center text-3xl'>Create New Event</h2>
             <Box component={"form"} onSubmit={handleSubmit} sx={{mt: 1}}>
                 <Grid container spacing={3}>
                     <Grid item xs={12} sm={6}>
@@ -160,9 +160,11 @@ function NewEvent(props) {
 
 
                 </Grid>
-                <button type={"submit"}>Submit</button>
+                <Button  type="submit" variant="contained">Submit</Button>
             </Box>
         </div>
+        </div>
+        
     );
 }
 
