@@ -1,4 +1,5 @@
-import React from 'react';
+import React,{useState, useEffect} from 'react';
+import Axios from 'axios'
 import {MdOutlineCancel} from 'react-icons/md';
 
 import {Button} from '.';
@@ -6,7 +7,31 @@ import {userProfileData} from '../data/dummy';
 import {useStateContext} from '../contexts/ContextProvider';
 import avatar from '../data/avatar.jpg';
 
+
+const userId = '63380b08f0c542eb6c2cff26'
+const url =`https://evoexpo-backend-api.herokuapp.com/api/admin/${userId}`
+
 const UserProfile = () => {
+    const [data, setData] = useState({
+        name: "Admin",
+        email: "info@shop.com",
+        profilePicLink: {avatar}
+      })
+    const fetchData = async()=>{
+        try{
+            const response = await Axios(url);
+            console.log(response.data.foundAdmin);
+            const {_id: adminID, name, email, contactNumber, profilePicLink, eventCount, listOfEvents} = response;
+            const newdata = {...response.data.foundAdmin};
+            setData(newdata)
+        }
+        catch(error){
+            console.log(error.response)
+        }
+        };
+        useEffect(()=>{
+            fetchData()
+        },[])
     const {currentColor} = useStateContext();
 
     return (
@@ -24,13 +49,13 @@ const UserProfile = () => {
             <div className="flex gap-5 items-center mt-6 border-color border-b-1 pb-6">
                 <img
                     className="rounded-full h-24 w-24"
-                    src={avatar}
+                    src={data.profilePicLink}
                     alt="user-profile"
                 />
                 <div>
-                    <p className="font-semibold text-xl dark:text-gray-200"> Michael Roberts </p>
+                    <p className="font-semibold text-xl dark:text-gray-200"> {data.name} </p>
                     <p className="text-gray-500 text-sm dark:text-gray-400"> Administrator </p>
-                    <p className="text-gray-500 text-sm font-semibold dark:text-gray-400"> info@shop.com </p>
+                    <p className="text-gray-500 text-sm font-semibold dark:text-gray-400">{data.email} </p>
                 </div>
             </div>
             <div>
