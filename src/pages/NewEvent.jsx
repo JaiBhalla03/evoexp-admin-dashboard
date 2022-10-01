@@ -6,6 +6,7 @@ import {AdapterDayjs} from '@mui/x-date-pickers/AdapterDayjs';
 import {TiTick} from "react-icons/ti";
 
 function NewEvent(props) {
+
     const formik = useFormik({
         initialValues: {
             title: "",
