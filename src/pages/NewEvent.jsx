@@ -1,11 +1,85 @@
-import React from 'react';
-import {useFormik} from "formik";
+import React, {useState} from 'react';
 import {Box, FormControl, Grid, InputLabel, MenuItem, Select, TextField, Typography} from "@mui/material";
-import {DateTimePicker, LocalizationProvider, MobileDatePicker} from "@mui/x-date-pickers";
+import {DateTimePicker, LocalizationProvider} from "@mui/x-date-pickers";
 import {AdapterDayjs} from '@mui/x-date-pickers/AdapterDayjs';
 import {TiTick} from "react-icons/ti";
+import {useFormik} from 'formik';
+
+
+const DynamicFields = (props) => {
+    const [formVals, setFormVals] = useState({
+        formValues: [{heading: "", desc: ""}]
+    })
+
+    const handleChange = (i, e) => {
+        let {formValues} = formVals;
+        formValues[i][e.target.heading] = e.target.heading;
+        setFormVals({formValues});
+    };
+
+    const addFormFields = () => {
+        setFormVals(
+            (prevState => ({
+                formValues: [...prevState.formValues, {heading: "", desc: ""}]
+            }))
+        );
+    };
+
+    const removeFormFields = i => {
+        let {formValues} = formVals;
+        formValues.splice(i, 1);
+        setFormVals({formValues});
+    };
+
+    const handleSubmit = e => {
+        e.preventDefault();
+        alert(JSON.stringify(formVals));
+    };
+
+    return (
+        <form onSubmit={handleSubmit}>
+            {formVals.formValues.map((element, index) => (
+                <div key={index}>
+                    <label>Heading</label>
+                    <input
+                        type="text"
+                        name={"heading"}
+                        value={element.heading || ""}
+                        onChange={e => handleChange(index, e)}
+                    />
+                    <label>Description</label>
+                    <input
+                        type="text"
+                        name={"desc"}
+                        value={element.desc || ""}
+                        onChange={e => handleChange(index, e)}
+                    />
+                    {
+                        index && <button type={"button"} onClick={() => removeFormFields(index)}>Remove</button>
+                    }
+                </div>
+            ))}
+            <div className="button-section">
+                <button className="button add" type="button" onClick={() => addFormFields()}>Add</button>
+                <button className="button submit" type="submit">Submit</button>
+            </div>
+        </form>
+    );
+};
+
 
 function NewEvent(props) {
+    fetch("https://evoexpo-backend-api.herokuapp.com/api/events", {
+        method: "POST",
+        body: JSON.stringify({userID: "someone"})
+    })
+        .then(res => res.json())
+        .then(data => {
+            console.log("Success: ", data)
+        })
+        .catch(error => {
+            console.log("Error: ", error);
+        });
     const formik = useFormik({
         initialValues: {
             title: "",
@@ -26,14 +100,13 @@ function NewEvent(props) {
         }
     });
 
-
     const handleSubmit = (e) => {
         e.preventDefault();
         console.log(formik.values);
     };
 
     return (
-        <div className={"m-24 p-20 pt-0 mt-10"}>
+        <Grid className={"m-24 p-20 pt-0 mt-10"}>
             <Typography variant="h2" gutterBottom>
                 Create New Event
             </Typography>
@@ -84,6 +157,7 @@ function NewEvent(props) {
                         </LocalizationProvider>
                     </Grid>
                     <Grid item xs={12} sm={6}>
+
                         <LocalizationProvider dateAdapter={AdapterDayjs}>
                             <DateTimePicker
                                 label="End Date of Event"
@@ -157,12 +231,13 @@ function NewEvent(props) {
                             value={formik.values.description}
                         />
                     </Grid>
-
-
                 </Grid>
                 <button type={"submit"}>Submit</button>
             </Box>
-        </div>
+            <DynamicFields/>
+        </Grid>
+
+
     );
 }
 
